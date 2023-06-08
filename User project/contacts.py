@@ -3,68 +3,9 @@ from abc import ABC, abstractclassmethod, abstractmethod
 from validation import *
 import pathlib
 from validation import *
-from csv import DictWriter
+import csv
 import pickle
-
-
-class BaseModel(ABC):
-
-    # def save_file(self):
-    #     info_file=pathlib.Path(self.get_file_path())
-    #     if info_file.exists():
-
-    #         with open(self.get_file_path(),'a+') as f:
-                
-    #             for line in self.get_file_content():
-    #                 f.write(line.replace(",", ""))
-    #             line=csv.writer(f)
-    #     else:
-    #         with open(self.get_file_path(), "a+") as f:
-    #             for line in self.get_file_content():
-    #                 f.write(line.replace(",", ""))
-    #             line=csv.writer(f)
-
-#for save pickle file we use this code:
-
-    def save_file(self):
-        info_file=pathlib.Path(self.get_file_path())
-        if info_file.exists():
-            info=self.read_pickle()
-
-            info.append(self.get_file_content())
-
-            with open(self.get_file_path(),'wb') as f:
-                pickle.dump(info,f)
-
-        else:
-            with open(self.get_file_path(), "wb") as f:
-                pickle.dump([self.get_file_content()],f)
-
-    @abstractmethod
-    def read_pickle(self) -> str:
-        pass
-
-    @abstractmethod
-    def get_file_path(self):
-        pass
-
-    @abstractmethod
-    def get_file_content(self) -> str:
-        pass
-
-    @classmethod
-    @abstractmethod
-    def from_str(cls, s: str):
-        pass
-    
-    # @abstractmethod
-    # def read_csv(self) -> str:
-    #     pass
-
-    @classmethod
-    @abstractmethod
-    def get_all_path(cls) -> list[str]:
-        pass
+from base import *
 
 
 class Contacts(BaseModel):
@@ -73,10 +14,12 @@ class Contacts(BaseModel):
     phone=PhoneValid()
     
 
-    def __init__(self, name, email, phone) -> None:
+    def __init__(self, name, email, phone,note=None,category=None) -> None:
         self.name=name
         self.email=email
         self.phone=phone
+        self.note=note
+        self.category=category
 
     @staticmethod
     def get_file_path():
@@ -97,7 +40,7 @@ class Contacts(BaseModel):
     #         return lines
 
     def get_file_content(self) -> str:
-        return f"{self.name}||{self.email}||{self.phone}"
+        return f"{self.name}||{self.email}||{self.phone}||{self.note}||{self.category}"
 
     @classmethod
     def from_str(cls, s: str):
@@ -123,7 +66,7 @@ class Contacts(BaseModel):
         return f"<contact #{self.name}>"
 
     def __str__(self):
-        return f"Name: {self.name} - Email: {self.email} - Phone: {self.phone}"
+        return f"Name: {self.name} - Email: {self.email} - Phone: {self.phone} - Note: {self.note} - Category: {self.category}"
     
     def delete(self):
         travelList = []
@@ -174,3 +117,24 @@ class Contacts(BaseModel):
             if u == phone:
                 return Contacts(x, y, u)
         assert None, "Not found"  # AssertionError
+    
+    @classmethod
+    def search_category(cls,category):
+        # for e in cls.read_csv():
+        for e in cls.read_pickle():
+            x=e.split("||")[0]
+            y=e.split("||")[1]
+            u=e.split("||")[2]
+            w=e.split("||")[3]
+            k=e.split("||")[4]
+            if k == category:
+                print(Contacts(x,y,u,w,k))
+            
+        assert None, "Not found"  # AssertionError
+
+
+#<------------------------------------------------------------------>
+
+
+
+    

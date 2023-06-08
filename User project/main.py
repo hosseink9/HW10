@@ -1,6 +1,8 @@
 from Menunode import generate_menu_from_dict
 from Userclass import *
+from contacts import *
 from Utils import get_input
+from action import *
 
 manager_menu_route = {
     "name": "User page",
@@ -16,6 +18,10 @@ manager_menu_route = {
         {
             "name": "View all contacts",
             "action": view_all_contacts,
+        },
+        {
+            "name": "View categorie",
+            "action": category,
         },
         {
             "name": "Delete a contact",
